@@ -1,10 +1,10 @@
 # Work Log
 
-## GROUP MEMBER 1
+## Jaylen Zeng
 
-### date x
+### 5-17-23
 
-info
+- Wrote initial project description in README
 
 ### date y
 
