@@ -17,8 +17,11 @@
 - Began programming MD5 message padding
 
 ### 5-22-23
-
 - Finished message padding
+
+### 5-23-23
+- Finished splitting longer messages into 512 bit chunks
+- Started main loop
 
 ## GROUP MEMBER 2
 
