@@ -63,9 +63,7 @@ int main(int argc, char const *argv[]) {
   memcpy(new_message, message, strlen(message)); //copying over initial message
   new_message[strlen(message)] = 128; // add one 1 (10000000)
   uint32_t bits_len = 8*strlen(message); //last 64 bits is for original length
-  memcpy(new_message+511, &bits_len, 4);
-
+  memcpy(new_message+511, &bits_len, 4); //append length of message in bits to end
   int ctr = printBits(512, new_message);
-  printf("%d\n", ctr/8);
   return 0;
 }
