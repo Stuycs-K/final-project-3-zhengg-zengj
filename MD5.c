@@ -27,6 +27,30 @@ int main(int argc, char const *argv[]) {
   uint8_t* message = "test"; //uint8_t is unsigned char
                              //uint32_t is unsigned int
 
+  //splitting message into 512-bit chunks
+  int chunks_length;
+  char** chunks;
+  if (strlen(message)*8 > 512) {
+    int curr = 0;
+    chunks_length = (strlen(message)/512);
+    chunks = malloc(chunks_length * sizeof(char*));
+    for (int i = 0; i < chunks_length; i++) {
+      char* temp = malloc(512 * sizeof(char));
+      for (int j = 0; j < 512; j++) {
+        temp[j] = message[curr+j];
+        if (j+1 < 512) curr = curr + j + 1; //update curr when loop is about to term
+      }
+      *(chunks + i) = temp;
+    }
+  }
+  else {
+    chunks_length = 1;
+    chunks = malloc(chunks_length * sizeof(char*));
+    *(chunks + 0) = message;
+  }
+
+  for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]);
+
   //s specifies per-round shift amounts
   uint32_t s[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
              5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
@@ -64,6 +88,9 @@ int main(int argc, char const *argv[]) {
   new_message[strlen(message)] = 128; // add one 1 (10000000)
   uint32_t bits_len = 8*strlen(message); //last 64 bits is for original length
   memcpy(new_message+511, &bits_len, 4); //append length of message in bits to end
-  int ctr = printBits(512, new_message);
+  // int ctr = printBits(512, new_message);
+
+  //main loop
+
   return 0;
 }
