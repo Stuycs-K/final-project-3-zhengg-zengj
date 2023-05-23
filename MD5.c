@@ -23,8 +23,25 @@ int printBits(size_t const size, void const * const ptr)
     return ctr;
 }
 
+char** splitMessage(char* curr_chunk)
+{
+  int curr2 = 0;
+  int num_words = (strlen(curr_chunk)/4);
+  char** words = malloc(num_words * sizeof(char*)); //we're splitting our message into 32 bit words
+  for (int i = 0; i < num_words; i++) {
+    char* temp = malloc(64 * sizeof(char));
+    for (int j = 0; j < 4; j++) {
+      temp[j] = curr_chunk[curr2+j];
+      if (j+1 >= 4) curr2 = curr2 + j + 1; //update curr when loop is about to term
+    }
+    *(words + i) = temp;
+  }
+  return words;
+}
+
 int main(int argc, char const *argv[]) {
-  uint8_t* initial_message = "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"; //uint8_t is unsigned char
+  uint8_t* initial_message = "testttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest";
+                             //uint8_t is unsigned char
                              //uint32_t is unsigned int
 
   //splitting message into 512-bit chunks
@@ -49,8 +66,7 @@ int main(int argc, char const *argv[]) {
     *(chunks + 0) = initial_message;
   }
 
-  printf("%d\n", chunks_length);
-  for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]);
+  // for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]); //checking chunkss
 
   //s specifies per-round shift amounts
   uint32_t s[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
@@ -90,9 +106,30 @@ int main(int argc, char const *argv[]) {
   new_message[strlen(message)] = 128; // add one 1 (10000000)
   uint32_t bits_len = 8*strlen(message); //last 64 bits is for original length
   memcpy(new_message+63, &bits_len, 4); //append length of message in bits to end
-  int ctr = printBits(64, new_message);
+  chunks[chunks_length-1] = new_message;
+  free(new_message);
 
-  //main loop
+  //looping time: going through each chunk
+  for (int c = 0; c < chunks_length; c++) {
+    printf("%d\n", c);
+    //start spltting chunks into smaller, 32-bit chunks
+    char* curr_chunk = chunks[c];
+    char** words = splitMessage(curr_chunk);
+    int num_words = (strlen(curr_chunk)/4);
+    //initialize hash values for this chunk
+    int A = a0;
+    int B = b0;
+    int C = c0;
+    int D = d0;
+    //main loop
+    for (int i = 0; i < 63; i++) {
+      int F, g;
+      // if (i > 0 || i <= 15) {
+      //   F = B & C | (())
+      // }
+    }
+
+  }
 
   return 0;
 }
