@@ -23,6 +23,11 @@
 - Finished splitting longer messages into 512 bit chunks
 - Started main loop
 
+### 5-24-23
+- Basically finish main loop
+  - Just need to implement left left_rotate
+  - Not sure if works
+
 ## Gil Zheng
 
 ### 5-18-23
