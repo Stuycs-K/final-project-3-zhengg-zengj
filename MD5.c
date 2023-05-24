@@ -40,7 +40,7 @@ char** splitMessage(char* curr_chunk)
 }
 
 int main(int argc, char const *argv[]) {
-  uint8_t* initial_message = "testttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest";
+  uint8_t* initial_message = "testttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttestb";
                              //uint8_t is unsigned char
                              //uint32_t is unsigned int
 
@@ -111,11 +111,10 @@ int main(int argc, char const *argv[]) {
 
   //looping time: going through each chunk
   for (int c = 0; c < chunks_length; c++) {
-    printf("%d\n", c);
     //start spltting chunks into smaller, 32-bit chunks
     char* curr_chunk = chunks[c];
-    char** words = splitMessage(curr_chunk);
     int num_words = (strlen(curr_chunk)/4);
+    char** words = splitMessage(curr_chunk);
     //initialize hash values for this chunk
     int A = a0;
     int B = b0;
@@ -124,10 +123,34 @@ int main(int argc, char const *argv[]) {
     //main loop
     for (int i = 0; i < 63; i++) {
       int F, g;
-      // if (i > 0 || i <= 15) {
-      //   F = B & C | (())
-      // }
+      //four different rounds
+      if (i >= 0 && i <= 15) {
+        F = (B & C) | ((~B) & D);
+        g = i;
+      }
+      else if (i >= 16 && i <= 31) {
+        F = (D & B) | ((~D) & C);
+        g = ((5*i) + 1) % 16;
+      }
+      else if (i >= 32 && i <= 47) {
+        F = B ^ C ^ D;
+        g = ((3 * i) + 5) % 16;
+      }
+      else if (i >= 48 && i <= 63) {
+        F = C ^ (B | (~D));
+        g = (7*i) % 16;
+      }
+
+      F = F + A + k[i] + words[g];
+      A = D;
+      D = C;
+      C = B;
+      // B = B + left_rotate(F, s[i]);
     }
+    a0+=A;
+    b0+=B;
+    c0+=C;
+    d0+=D;
 
   }
 
