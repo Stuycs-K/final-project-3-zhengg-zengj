@@ -1,5 +1,5 @@
 #include "MD5.h"
-
+//Check header file for function descriptions
 int printBits(size_t const size, void const * const ptr)
 {
     unsigned char *b = (unsigned char*) ptr;
