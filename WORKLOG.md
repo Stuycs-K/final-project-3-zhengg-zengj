@@ -23,12 +23,16 @@
 - Finished splitting longer messages into 512 bit chunks
 - Started main loop
 
-## GROUP MEMBER 2
+## Gil Zheng
 
-### date x
+### 5-18-23
+- Research on hash collisions in order to create a viable project.
+- Found different methods such as hashclash, but unsure of practicability
 
-info
+### 5-19-23
+- Researching MD5 algorithm; changed proj README
 
-### date y
+### 5-22-23 : 5-23-24
+- Worked on the presentation aspect of the project
 
 info
