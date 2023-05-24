@@ -1,4 +1,5 @@
 #include "MD5.h"
+
 //Check header file for function descriptions
 int printBits(size_t const size, void const * const ptr)
 {
@@ -166,7 +167,7 @@ int main(int argc, char const *argv[]) {
       A = D;
       D = C;
       C = B;
-      // B = B + left_rotate(F, s[i]);
+      B = B + left_rotate(F, s[i]);
     }
     a0+=A;
     b0+=B;
