@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
+#include "MD5.h"
 
 int printBits(size_t const size, void const * const ptr)
 {
@@ -39,33 +36,65 @@ char** splitMessage(char* curr_chunk)
   return words;
 }
 
-int main(int argc, char const *argv[]) {
-  uint8_t* initial_message = "testttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttestb";
-                             //uint8_t is unsigned char
-                             //uint32_t is unsigned int
+char* add_padding(char* chunk) 
+{
+  uint8_t *message = chunk;
+  printf("%s\n", message);
+  int new_len = ((((strlen(message) + 8) / 64) + 1) * 64) - 8;
+  uint8_t *new_message;
+  new_message = calloc(64, 1);                   // zeroes
+  memcpy(new_message, message, strlen(message)); // copying over initial message
+  new_message[strlen(message)] = 128;            // add one 1 (10000000)
+  uint32_t bits_len = 8 * strlen(message);       // last 64 bits is for original length
+  memcpy(new_message + 63, &bits_len, 4);        // append length of message in bits to end
+  return new_message;
+}
 
-  //splitting message into 512-bit chunks
+char** make_chunks(char* initial_message) 
+{
   int chunks_length;
-  char** chunks;
-  if (strlen(initial_message)*8 > 512) {
+  char **chunks;
+  if (strlen(initial_message) * 8 > 512)
+  {
     int curr = 0;
-    chunks_length = (strlen(initial_message)/64) + 1;
-    chunks = malloc(chunks_length * sizeof(char*));
-    for (int i = 0; i < chunks_length; i++) {
-      char* temp = malloc(64 * sizeof(char));
-      for (int j = 0; j < 64; j++) {
-        temp[j] = initial_message[curr+j];
-        if (j+1 >= 64) curr = curr + j + 1; //update curr when loop is about to term
+    chunks_length = (strlen(initial_message) / 64) + 1;
+    chunks = malloc(chunks_length * sizeof(char *));
+    for (int i = 0; i < chunks_length; i++)
+    {
+      char *temp = malloc(64 * sizeof(char));
+      for (int j = 0; j < 64; j++)
+      {
+        temp[j] = initial_message[curr + j];
+        if (j + 1 >= 64)
+          curr = curr + j + 1; // update curr when loop is about to term
       }
       *(chunks + i) = temp;
     }
   }
-  else {
+  else
+  {
     chunks_length = 1;
-    chunks = malloc(chunks_length * sizeof(char*));
+    chunks = malloc(chunks_length * sizeof(char *));
     *(chunks + 0) = initial_message;
   }
+  return chunks;
+}
 
+int find_length(char** chunks) 
+{
+  int len = 0;
+  while (chunks[len]) len++;
+  return len;
+}
+
+int main(int argc, char const *argv[]) {
+  uint8_t *initial_message = "testttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttestb";
+  // uint8_t is unsigned char
+  // uint32_t is unsigned int
+
+  //splitting message into 512-bit chunks
+  char** chunks = make_chunks(initial_message);
+  int chunks_length = find_length(chunks);
   // for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]); //checking chunkss
 
   //s specifies per-round shift amounts
@@ -97,17 +126,9 @@ int main(int argc, char const *argv[]) {
 
   //padding 448 mod 512 long
   uint8_t* message = chunks[chunks_length-1];
-  printf("%s\n", message);
-  int new_len = ((((strlen(message) + 8) / 64) + 1) * 64) - 8;
-
-  uint8_t* new_message;
-  new_message = calloc(64, 1); //zeroes
-  memcpy(new_message, message, strlen(message)); //copying over initial message
-  new_message[strlen(message)] = 128; // add one 1 (10000000)
-  uint32_t bits_len = 8*strlen(message); //last 64 bits is for original length
-  memcpy(new_message+63, &bits_len, 4); //append length of message in bits to end
-  chunks[chunks_length-1] = new_message;
-  free(new_message);
+  uint8_t* new_message = add_padding(message);
+  chunks[chunks_length - 1] = new_message;
+  printBits(64, chunks[chunks_length - 1]);
 
   //looping time: going through each chunk
   for (int c = 0; c < chunks_length; c++) {
