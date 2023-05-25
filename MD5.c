@@ -95,6 +95,7 @@ int main(int argc, char const *argv[]) {
   //splitting message into 512-bit chunks
   char** chunks = make_chunks(initial_message);
   int chunks_length = find_length(chunks);
+  // printf("checking chunks\n");
   // for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]); //checking chunkss
   //s specifies per-round shift amounts
   uint32_t s[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
@@ -118,59 +119,64 @@ int main(int argc, char const *argv[]) {
                    0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
                    0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391};
   //initializing variables
-  int a0 = 0x67452301;   // A
-  int b0 = 0xefcdab89;  // B
-  int c0 = 0x98badcfe;   // C
-  int d0 = 0x10325476;   // D
+  uint32_t a0 = 0x67452301;   // A
+  uint32_t b0 = 0xefcdab89;  // B
+  uint32_t c0 = 0x98badcfe;   // C
+  uint32_t d0 = 0x10325476;   // D
 
   //padding 448 mod 512 long
   uint8_t* message = chunks[chunks_length-1];
   uint8_t* new_message = add_padding(message);
   chunks[chunks_length - 1] = new_message;
-  // printBits(64, chunks[chunks_length - 1]);
+  //printBits(64, chunks[chunks_length - 1]);
 
   //looping time: going through each chunk
+  int offset = 0;
   for (int c = 0; c < chunks_length; c++) {
     //start spltting chunks into smaller, 32-bit chunks
     char* curr_chunk = chunks[c];
-    int num_words = (strlen(curr_chunk)/4);
-    char** words = splitMessage(curr_chunk);
+    uint32_t *w = (uint32_t *) (curr_chunk + offset);
+    // int num_words = (strlen(curr_chunk)/4);
+    // char** words = splitMessage(curr_chunk);
     //initialize hash values for this chunk
-    int A = a0;
-    int B = b0;
-    int C = c0;
-    int D = d0;
+    uint32_t A = a0;
+    uint32_t B = b0;
+    uint32_t C = c0;
+    uint32_t D = d0;
     //main loop
-    for (int i = 0; i < 63; i++) {
-      int F, g;
+    for (int i = 0; i < 64; i++) {
+      uint32_t F, g;
       //four different rounds
-      if (i >= 0 && i <= 15) {
+      if (i < 16) {
         F = (B & C) | ((~B) & D);
         g = i;
       }
-      else if (i >= 16 && i <= 31) {
+      else if (i < 32) {
         F = (D & B) | ((~D) & C);
         g = ((5*i) + 1) % 16;
       }
-      else if (i >= 32 && i <= 47) {
+      else if (i < 48) {
         F = B ^ C ^ D;
         g = ((3 * i) + 5) % 16;
       }
-      else if (i >= 48 && i <= 63) {
+      else {
         F = C ^ (B | (~D));
         g = (7*i) % 16;
       }
 
-      F = F + A + k[i] + words[g];
-      A = D;
+      int temp = D;
       D = C;
       C = B;
-      B = B + left_rotate(F, s[i]);
+      printf("rotateLeft(%x + %x + %x + %x, %d) %d\n", A, F, k[i], w[g], s[i], i);
+      B = B + left_rotate((A + F + k[i] + w[g]), s[i]);
+      A = temp;
     }
+
     a0+=A;
     b0+=B;
     c0+=C;
     d0+=D;
+    offset+= (512 / 8);
   }
   uint8_t *digest_p;
   digest_p=(uint8_t *)&a0;
