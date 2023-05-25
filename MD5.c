@@ -37,7 +37,7 @@ char** splitMessage(char* curr_chunk)
   return words;
 }
 
-char* add_padding(char* chunk) 
+char* add_padding(char* chunk)
 {
   uint8_t *message = chunk;
   int new_len = ((((strlen(message) + 8) / 64) + 1) * 64) - 8;
@@ -50,7 +50,7 @@ char* add_padding(char* chunk)
   return new_message;
 }
 
-char** make_chunks(char* initial_message) 
+char** make_chunks(char* initial_message)
 {
   int chunks_length;
   char **chunks;
@@ -80,7 +80,7 @@ char** make_chunks(char* initial_message)
   return chunks;
 }
 
-int find_length(char** chunks) 
+int find_length(char** chunks)
 {
   int len = 0;
   while (chunks[len]) len++;
@@ -88,7 +88,7 @@ int find_length(char** chunks)
 }
 
 int main(int argc, char const *argv[]) {
-  uint8_t *initial_message = "testttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttestb";
+  uint8_t *initial_message = "test";
   // uint8_t is unsigned char
   // uint32_t is unsigned int
 
@@ -96,7 +96,6 @@ int main(int argc, char const *argv[]) {
   char** chunks = make_chunks(initial_message);
   int chunks_length = find_length(chunks);
   // for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]); //checking chunkss
-
   //s specifies per-round shift amounts
   uint32_t s[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
              5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
@@ -173,6 +172,15 @@ int main(int argc, char const *argv[]) {
     c0+=C;
     d0+=D;
   }
-
+  uint8_t *digest_p;
+  digest_p=(uint8_t *)&a0;
+  printf("%2.2x%2.2x%2.2x%2.2x", digest_p[0], digest_p[1], digest_p[2], digest_p[3]);
+  digest_p=(uint8_t *)&b0;
+  printf("%2.2x%2.2x%2.2x%2.2x", digest_p[0], digest_p[1], digest_p[2], digest_p[3]);
+  digest_p=(uint8_t *)&c0;
+  printf("%2.2x%2.2x%2.2x%2.2x", digest_p[0], digest_p[1], digest_p[2], digest_p[3]);
+  digest_p=(uint8_t *)&d0;
+  printf("%2.2x%2.2x%2.2x%2.2x", digest_p[0], digest_p[1], digest_p[2], digest_p[3]);
+  puts("");
   return 0;
 }
