@@ -40,7 +40,6 @@ char** splitMessage(char* curr_chunk)
 char* add_padding(char* chunk) 
 {
   uint8_t *message = chunk;
-  printf("%s\n", message);
   int new_len = ((((strlen(message) + 8) / 64) + 1) * 64) - 8;
   uint8_t *new_message;
   new_message = calloc(64, 1);                   // zeroes
@@ -129,7 +128,7 @@ int main(int argc, char const *argv[]) {
   uint8_t* message = chunks[chunks_length-1];
   uint8_t* new_message = add_padding(message);
   chunks[chunks_length - 1] = new_message;
-  printBits(64, chunks[chunks_length - 1]);
+  // printBits(64, chunks[chunks_length - 1]);
 
   //looping time: going through each chunk
   for (int c = 0; c < chunks_length; c++) {
@@ -173,7 +172,6 @@ int main(int argc, char const *argv[]) {
     b0+=B;
     c0+=C;
     d0+=D;
-
   }
 
   return 0;
