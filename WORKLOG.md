@@ -25,8 +25,12 @@
 
 ### 5-24-23
 - Basically finish main loop
-  - Just need to implement left left_rotate
+  - ~~Just need to implement left_rotate~~ finished
   - Not sure if works
+
+### 5-25-23
+- Updated README.md
+- Added references/sources
 
 ## Gil Zheng
 
@@ -40,4 +44,7 @@
 ### 5-22-23 : 5-23-24
 - Worked on the presentation aspect of the project
 
-info
+## Resources
+https://en.wikipedia.org/wiki/MD5#Algorithm (Psuedocode found here)
+https://fthb321.github.io/MD5-Hash/MD5OurVersion2.html (Visualization of padding)
+https://stackoverflow.com/questions/32933254/which-type-of-leftrotation-is-used-by-the-md5-hash-algorithm (leftrotate found here)
