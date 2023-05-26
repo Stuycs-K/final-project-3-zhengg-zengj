@@ -12,7 +12,7 @@ int printBits(size_t const size, void const * const ptr)
     for (i = size-1; i >= 0; i--) {
         for (j = 7; j >= 0; j--) {
             byte = (b[i] >> j) & 1;
-            printf("%u", byte);
+            printf("%x", byte);
             ctr++;
         }
         printf(" ");
@@ -21,32 +21,16 @@ int printBits(size_t const size, void const * const ptr)
     return ctr;
 }
 
-char** splitMessage(char* curr_chunk)
-{
-  int curr2 = 0;
-  int num_words = (strlen(curr_chunk)/4);
-  char** words = malloc(num_words * sizeof(char*)); //we're splitting our message into 32 bit words
-  for (int i = 0; i < num_words; i++) {
-    char* temp = malloc(64 * sizeof(char));
-    for (int j = 0; j < 4; j++) {
-      temp[j] = curr_chunk[curr2+j];
-      if (j+1 >= 4) curr2 = curr2 + j + 1; //update curr when loop is about to term
-    }
-    *(words + i) = temp;
-  }
-  return words;
-}
-
 char* add_padding(char* chunk)
 {
   uint8_t *message = chunk;
   int new_len = ((((strlen(message) + 8) / 64) + 1) * 64) - 8;
   uint8_t *new_message;
-  new_message = calloc(64, 1);                   // zeroes
+  new_message = calloc(56+64, 1);                   // zeroes
   memcpy(new_message, message, strlen(message)); // copying over initial message
   new_message[strlen(message)] = 128;            // add one 1 (10000000)
   uint32_t bits_len = 8 * strlen(message);       // last 64 bits is for original length
-  memcpy(new_message + 63, &bits_len, 4);        // append length of message in bits to end
+  memcpy(new_message + 56, &bits_len, 4);        // append length of message in bits to end
   return new_message;
 }
 
@@ -95,8 +79,7 @@ int main(int argc, char const *argv[]) {
   //splitting message into 512-bit chunks
   char** chunks = make_chunks(initial_message);
   int chunks_length = find_length(chunks);
-  // printf("checking chunks\n");
-  // for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]); //checking chunkss
+    // for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]); //checking chunks
   //s specifies per-round shift amounts
   uint32_t s[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
              5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
@@ -124,11 +107,12 @@ int main(int argc, char const *argv[]) {
   uint32_t c0 = 0x98badcfe;   // C
   uint32_t d0 = 0x10325476;   // D
 
+    //main loop
   //padding 448 mod 512 long
   uint8_t* message = chunks[chunks_length-1];
   uint8_t* new_message = add_padding(message);
   chunks[chunks_length - 1] = new_message;
-  //printBits(64, chunks[chunks_length - 1]);
+  printBits(64, chunks[chunks_length - 1]);
 
   //looping time: going through each chunk
   int offset = 0;
@@ -136,8 +120,7 @@ int main(int argc, char const *argv[]) {
     //start spltting chunks into smaller, 32-bit chunks
     char* curr_chunk = chunks[c];
     uint32_t *w = (uint32_t *) (curr_chunk + offset);
-    // int num_words = (strlen(curr_chunk)/4);
-    // char** words = splitMessage(curr_chunk);
+
     //initialize hash values for this chunk
     uint32_t A = a0;
     uint32_t B = b0;
@@ -167,7 +150,7 @@ int main(int argc, char const *argv[]) {
       int temp = D;
       D = C;
       C = B;
-      printf("rotateLeft(%x + %x + %x + %x, %d) %d\n", A, F, k[i], w[g], s[i], i);
+      // printf("rotateLeft(%x + %x + %x + %x, %d) %d\n", A, F, k[i], w[g], s[i], i); //for debugging
       B = B + left_rotate((A + F + k[i] + w[g]), s[i]);
       A = temp;
     }
