@@ -8,7 +8,7 @@ No additional libraries have to be installed
 
 ```
 gcc -o MD5.out MD5.c
-./MD5.out
+./MD5.out (text)
 ```
 
 ## About

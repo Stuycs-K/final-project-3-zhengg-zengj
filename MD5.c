@@ -21,15 +21,14 @@ int printBits(size_t const size, void const * const ptr)
     return ctr;
 }
 
-char* add_padding(char* chunk, char* original)
+char* add_padding(char* message)
 {
-  uint8_t *message = chunk;
   int new_len = ((((strlen(message) + 8) / 64) + 1) * 64) - 8;
   uint8_t *new_message;
   new_message = calloc(new_len+64, 1);                   // zeroes
   memcpy(new_message, message, strlen(message)); // copying over initial message
   new_message[strlen(message)] = 128;            // add one 1 (10000000)
-  uint32_t bits_len = 8 * strlen(original);       // last 64 bits is for original length
+  uint32_t bits_len = 8 * strlen(message);       // last 64 bits is for original length
   memcpy(new_message + new_len, &bits_len, 4);        // append length of message in bits to end
   return new_message;
 }
@@ -71,12 +70,7 @@ int find_length(char* initial_message)
   return length;
 }
 
-int main(int argc, char const *argv[]) {
-  uint8_t *initial_message = "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest";
-  // uint8_t *initial_message = "test";
-  // uint8_t is unsigned char
-  // uint32_t is unsigned int
-
+void md5(char* initial_message) {
   //s specifies per-round shift amounts
   uint32_t s[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
              5, 9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5, 9, 14, 20,
@@ -106,23 +100,19 @@ int main(int argc, char const *argv[]) {
 
   //padding 448 mod 512 long
   // uint8_t* message = chunks[chunks_length-1];
-  uint8_t* new_message = add_padding(initial_message, initial_message);
+  uint8_t* new_message = add_padding(initial_message);
   int new_len = ((((strlen(new_message) + 8) / 64) + 1) * 64) - 8;
-  // printBits(new_len+64, new_message);
-  // chunks[chunks_length - 1] = new_message;
 
   //splitting message into 512-bit chunks
   char** chunks = make_chunks(new_message);
   int chunks_length = find_length(new_message);
   // for (int i = 0; i < chunks_length; i++) printf("%s\n", chunks[i]);
-  // printf("\n");
 
   //looping time: going through each chunk
   for (int c = 0; c < chunks_length; c++) {
     //start spltting chunks into smaller, 32-bit chunks
     char* curr_chunk = chunks[c];
     uint32_t *w = (uint32_t *) (curr_chunk);
-    if (w == NULL) c++;
     //initialize hash values for this chunk
     uint32_t A = a0;
     uint32_t B = b0;
@@ -161,7 +151,6 @@ int main(int argc, char const *argv[]) {
     b0+=B;
     c0+=C;
     d0+=D;
-    // offset+= (512 / 8);
   }
   uint8_t *digest_p;
   digest_p=(uint8_t *)&a0;
@@ -173,5 +162,20 @@ int main(int argc, char const *argv[]) {
   digest_p=(uint8_t *)&d0;
   printf("%2.2x%2.2x%2.2x%2.2x", digest_p[0], digest_p[1], digest_p[2], digest_p[3]);
   puts("");
+}
+
+
+int main(int argc, char** argv) {
+
+  if (argc < 2) {
+      printf("Please include a message (%s |text here!|)\n", argv[0]);
+      return 1;
+  }
+
+  char* message = argv[1];
+  printf("Original message: %s\n", message);
+  printf("MD5 Encrypted: ");
+  md5(message);
+
   return 0;
 }
