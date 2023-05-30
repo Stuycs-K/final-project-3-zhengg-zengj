@@ -21,38 +21,38 @@ int printBits(size_t const size, void const * const ptr)
     return ctr;
 }
 
-char* add_padding(char* chunk)
+char* add_padding(char* chunk, char* original)
 {
   uint8_t *message = chunk;
   int new_len = ((((strlen(message) + 8) / 64) + 1) * 64) - 8;
   uint8_t *new_message;
-  new_message = calloc(56+64, 1);                   // zeroes
+  new_message = calloc(new_len+64, 1);                   // zeroes
   memcpy(new_message, message, strlen(message)); // copying over initial message
   new_message[strlen(message)] = 128;            // add one 1 (10000000)
-  uint32_t bits_len = 8 * strlen(message);       // last 64 bits is for original length
-  memcpy(new_message + 56, &bits_len, 4);        // append length of message in bits to end
+  uint32_t bits_len = 8 * strlen(original);       // last 64 bits is for original length
+  memcpy(new_message + new_len, &bits_len, 4);        // append length of message in bits to end
   return new_message;
 }
 
 char** make_chunks(char* initial_message)
 {
+  // memcpy(new_message + new_len, &bits_len, 4);
   int chunks_length;
   char **chunks;
   if (strlen(initial_message) * 8 > 512)
   {
-    int curr = 0;
+    int offset = 0;
     chunks_length = (strlen(initial_message) / 64) + 1;
+    if (strlen(initial_message)%64 >= 56) {
+      chunks_length++;
+    }
     chunks = malloc(chunks_length * sizeof(char *));
     for (int i = 0; i < chunks_length; i++)
     {
-      char *temp = malloc(64 * sizeof(char));
-      for (int j = 0; j < 64; j++)
-      {
-        temp[j] = initial_message[curr + j];
-        if (j + 1 >= 64)
-          curr = curr + j + 1; // update curr when loop is about to term
-      }
+      char *temp = calloc(64, sizeof(char));
+      memcpy(temp, initial_message+offset, 64);
       *(chunks + i) = temp;
+      offset += 64;
     }
   }
   else
@@ -64,25 +64,22 @@ char** make_chunks(char* initial_message)
   return chunks;
 }
 
-int find_length(char** chunks)
+int find_length(char* initial_message)
 {
-  int len = 0;
-  while (chunks[len]) len++;
-  return len;
+  int length = (strlen(initial_message) / 64) + 1;
+  if (strlen(initial_message)%64 >= 56) length++;
+  return length;
 }
 
 int main(int argc, char const *argv[]) {
-  uint8_t *initial_message = "test";
+  uint8_t *initial_message = "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest";
+  // uint8_t *initial_message = "test";
   // uint8_t is unsigned char
   // uint32_t is unsigned int
 
-  //splitting message into 512-bit chunks
-  char** chunks = make_chunks(initial_message);
-  int chunks_length = find_length(chunks);
-    // for (int i = 0; i < chunks_length; i++) printf("%s\n\n", chunks[i]); //checking chunks
   //s specifies per-round shift amounts
   uint32_t s[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
-             5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
+             5, 9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5, 9, 14, 20,
              4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
              6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21};
   uint32_t k[] = { 0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
@@ -107,20 +104,25 @@ int main(int argc, char const *argv[]) {
   uint32_t c0 = 0x98badcfe;   // C
   uint32_t d0 = 0x10325476;   // D
 
-    //main loop
   //padding 448 mod 512 long
-  uint8_t* message = chunks[chunks_length-1];
-  uint8_t* new_message = add_padding(message);
-  chunks[chunks_length - 1] = new_message;
-  printBits(64, chunks[chunks_length - 1]);
+  // uint8_t* message = chunks[chunks_length-1];
+  uint8_t* new_message = add_padding(initial_message, initial_message);
+  int new_len = ((((strlen(new_message) + 8) / 64) + 1) * 64) - 8;
+  // printBits(new_len+64, new_message);
+  // chunks[chunks_length - 1] = new_message;
+
+  //splitting message into 512-bit chunks
+  char** chunks = make_chunks(new_message);
+  int chunks_length = find_length(new_message);
+  // for (int i = 0; i < chunks_length; i++) printf("%s\n", chunks[i]);
+  // printf("\n");
 
   //looping time: going through each chunk
-  int offset = 0;
   for (int c = 0; c < chunks_length; c++) {
     //start spltting chunks into smaller, 32-bit chunks
     char* curr_chunk = chunks[c];
-    uint32_t *w = (uint32_t *) (curr_chunk + offset);
-
+    uint32_t *w = (uint32_t *) (curr_chunk);
+    if (w == NULL) c++;
     //initialize hash values for this chunk
     uint32_t A = a0;
     uint32_t B = b0;
@@ -146,11 +148,11 @@ int main(int argc, char const *argv[]) {
         F = C ^ (B | (~D));
         g = (7*i) % 16;
       }
-
       int temp = D;
       D = C;
       C = B;
       // printf("rotateLeft(%x + %x + %x + %x, %d) %d\n", A, F, k[i], w[g], s[i], i); //for debugging
+      // printf("curr(A: %x, B:%x, C:%x, D:%x) %d\n", A, B, C, D, i);
       B = B + left_rotate((A + F + k[i] + w[g]), s[i]);
       A = temp;
     }
@@ -159,7 +161,7 @@ int main(int argc, char const *argv[]) {
     b0+=B;
     c0+=C;
     d0+=D;
-    offset+= (512 / 8);
+    // offset+= (512 / 8);
   }
   uint8_t *digest_p;
   digest_p=(uint8_t *)&a0;
