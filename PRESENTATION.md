@@ -11,3 +11,12 @@ MD5 uses a mathematical algorithm to process the string.
 
 ### Padding
 The hash algorithm first splits the message into 512-bit chunks -- it needs to make sure that each chunk is divisible by 512. If the message is already divisible by 512, the padding portion would be skipped. The padding operates by appending a singular 1 bit to the chunk and fills the rest with 0s until the chunk is 448 bits long. Then, it appends a 64 bit value with the size of the original message.
+
+### Initialization/Splitting
+The algorithm uses four buffer constants: A,B,C,D that are used to compute the digest. Each of them are 32-bit and pre-initialized in hexadecimals:
+```A = 0x67452301
+  B = 0xEFCDAB89
+  C = 0x98BADCFE
+  D = 0x10325476```
+
+For each 512-bit chunk, it is split into
