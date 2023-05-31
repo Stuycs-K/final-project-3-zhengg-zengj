@@ -32,6 +32,11 @@
 - Updated README.md
 - Added references/sources
 
+### 5-26-23 : 5-29-23
+- Fixed bug in MD5 with padding
+- Algo now works with any message length
+- Fully functional MD5 hash
+
 ## Gil Zheng
 
 ### 5-18-23
