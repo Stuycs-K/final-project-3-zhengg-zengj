@@ -49,13 +49,28 @@
 
 ### 5-18-23
 - Research on hash collisions in order to create a viable project.
-- Found different methods such as hashclash, but unsure of practicability
+- Found different methods such as HashClash, but unsure of practicability
 
 ### 5-19-23
 - Researching MD5 algorithm; changed proj README
 
-### 5-22-23 : 5-23-24
-- Worked on the presentation aspect of the project
+### 5-22-23 & 5-23-23
+- Worked on the presentation aspect of the project  
+
+### 5-24-23 & 5-25-23
+- Finished the padding portion of the presentation
+- Did the compression/concatenation of the MD5 program
+
+### 5-26-23 to 5-29-23
+- Continued working on presentation, and started further researching on HashClash
+
+### 5-30-23
+- Created homework questions and started experimenting on HashClash
+
+### 5-31-23 to 6-2-23
+- Scrapped presentation on MD5 algorithm and switched focus to prefix collisions
+- Updated the readme and homework
+
 
 ## Resources
 https://en.wikipedia.org/wiki/MD5#Algorithm (Psuedocode found here)
