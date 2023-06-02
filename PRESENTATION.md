@@ -1,12 +1,19 @@
 # MD5
 
 ## Background of MD5
-MD5, known as Message-Digest 5, is a hash algorithm created in 1991 by Ronald Rivest as an extension to its predecessor, MD4.  
+MD5, known as Message-Digest 5, is a hash algorithm created in 1991 by Ronald Rivest as an extension to its predecessor, MD4, which was known to be insecure.
 
-Like the majority of hash function, MD5, is a one way encryption method used for authenticating digital signatures via checksums. The hash cannot be reversed, but the same input would always result in the same hash. However, MD5 is no longer consider a cryptographic hash as it is vulnerable to hash collisions -- where two strings have the same hash value.  
+Like the majority of hash function, MD5, is a one way encryption method used for authenticating digital signatures via checksums.
+The generated hash cannot be reversed and a small change to the input would change the enter hash, but the same input would always result in the same hash. However, by 2005, cryptographers, researchers, and even Rivest himself concluded that MD5 was no longer consider a cryptographic hash as it is vulnerable to hash collisions -- where two inputs would output the same hash value.  
 
-## How it works
-MD5 uses a mathematical algorithm to process the string.
+## What Makes MD5 so vulnerable?
+The main contributing factor is the design of the algorithm. MD5 produces a 128-bit hash, which means there's approximately 2^128 different hashes that can be generated; this value can be lowered to approximately 2^64 with a birthday attack where the probability of finding a hash collision increases as the number of hashes generated also increases (assuming that all hashes have the same probability to be generated).
+
+We can demonstrate these attacks using a tool called HashClash
+# Identical-prefix Collision Attack/ Classical Condition Attack
+
+# Chosen-prefix Collision Attack
+
 
 ### Padding/Appending Length
 The hash algorithm first splits the message into 512-bit chunks -- it needs to make sure that each chunk is divisible by 512. If the message is already divisible by 512, the padding portion would be skipped. The padding operates by appending a singular 1 bit to the chunk and fills the rest with 0s until the chunk is 448 bits long. Then, it appends a 64 bit value with the size of the original message.
