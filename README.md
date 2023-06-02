@@ -15,3 +15,7 @@ gcc -o MD5.out MD5.c
 ## About
 
 This project serves to recreate the MD5 hash algorithm in C. Not only will we implement our own version of MD5, but we also aim to fully understand and share the inner workings of the hashing algorithm.
+
+## Links
+- [Presentation](./PRESENTATION.md) 
+- [Homework](./HOMEWORK.md)
