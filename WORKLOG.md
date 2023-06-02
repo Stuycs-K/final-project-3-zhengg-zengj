@@ -37,6 +37,14 @@
 - Algo now works with any message length
 - Fully functional MD5 hash
 
+### 5-30-23
+- Worked on presentation
+- Discussed with other group how to split MD5 presentation
+  -We will talk about its background and collisions | they will talk about algo itself
+
+### 5-31-23 & 6-1-23
+- More presentation work
+
 ## Gil Zheng
 
 ### 5-18-23
