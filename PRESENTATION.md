@@ -9,11 +9,12 @@ The generated hash cannot be reversed and a small change to the input would chan
 ## What makes MD5 so vulnerable?
 The main contributing factor is the design of the algorithm. MD5 produces a 128-bit hash, which means there's approximately 2^128 (3.4 × 10^38) different hashes that can be generated; a birthday attack can brute force a collision in approximately 2^64 attempts, where the probability of finding a hash collision increases as the number of hashes generated also increases (assuming that all hashes have the same probability to be generated).
 ![Probability of Collision Using Birthday Attack](https://github.com/Stuycs-K/final-project-3-zhengg-zengj/blob/main/IMAGES/BirthdayAttackProbability.jpg?raw=true)
-Furthermore, MD5 uses the Merkle–Damgård construction which is also used by many other popular hash algorithms.
-We can demonstrate these attacks using a tool called [HashClash](https://github.com/cr-marcstevens/hashclash) -- a tool created by Marc Stevens to generate MD5 Hash Collisions.
+MD5, like many other popular hash algorithms, follows the Merkle–Damgård construction for is padding and compression steps. The inputs of MD5 are padded to 512-bits because the Merkle–Damgård compression function cannot handle arbitrary sizes. This function is also the reason why MD5 has the length of the initial input appended to the end of the padding: making the construction more secure.
 ![Merkle-Damgård Construction Process](https://github.com/Stuycs-K/final-project-3-zhengg-zengj/blob/main/IMAGES/Merkle-Damg%C3%A5rd.jpg)
+However, this block construction is what allows MD5 to be vulnerable to prefix collisions. There are two main prefix collisions: identical and chosen. We'll use [HashClash](https://github.com/cr-marcstevens/hashclash), a tool used to generate both prefix collisions, to demonstrate each one. 
+
 ### Identical-prefix Collision Attack/ Classical Condition Attack:
-Like the name, choose an. The program will continually adding small changes to the block
+The identical-prefix collision starts off with a arbitrary prefix
 
 ### Chosen-prefix Collision Attack
 
