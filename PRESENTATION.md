@@ -37,7 +37,7 @@ github.com/cr-marcstevens/hashclash), a tool used to generate both prefix collis
 - Install zlib & bzip2 libraries:
 `sudo apt-get install zlib1g-dev libbz2-dev` | *MAC:* `brew install zlib-ng libzdb`
 
-- *Not needed* Only download CUDA if you have a NVIDIA graphics card -- allows computer to generate collision blocks/hashes faster.
+- **Not needed** Only download CUDA if you have a NVIDIA graphics card -- allows computer to generate collision blocks/hashes faster.
 
 - Clone the repository: `git clone https://github.com/cr-marcstevens/hashclash.git`
 
@@ -46,6 +46,7 @@ Now run the shell script:  `./install_boost.sh`
 
 - Run the automatic build script `./build.sh`
 If everything is correctly downloaded it would output the following:
+
 `
 [*] checking for system tool: autoconf: found
 [*] checking for system tool: automake: found
@@ -59,18 +60,5 @@ If everything is correctly downloaded it would output the following:
 ### Identical-prefix Collision Attack/ Classical Condition Attack:
 The identical-prefix collision starts off with a arbitrary prefix
 
+
 ### Chosen-prefix Collision Attack
-
-
-### Padding/Appending Length
-The hash algorithm first splits the message into 512-bit chunks -- it needs to make sure that each chunk is divisible by 512. If the message is already divisible by 512, the padding portion would be skipped. The padding operates by appending a singular 1 bit to the chunk and fills the rest with 0s until the chunk is 448 bits long. Then, it appends a 64 bit value with the size of the original message.
-
-### Initialization/Splitting
-The algorithm uses four buffer constants: A,B,C,D that are used to compute the digest Each of them are 32-bit and pre-initialized in hexadecimals:
-```
-  A = 0x67452301
-  B = 0xEFCDAB89
-  C = 0x98BADCFE
-  D = 0x10325476
-```
-Each 512-bit chunk are further split into 16 words that are 32-bit each. In the processing step, there are four rounds with 16 steps each.
