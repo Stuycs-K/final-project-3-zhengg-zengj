@@ -58,7 +58,30 @@ If everything is correctly downloaded it would output the following:
 `
 
 ### Identical-prefix Collision Attack/ Classical Condition Attack:
-The identical-prefix collision starts off with a arbitrary prefix
+
+1. Define an arbitrary prefix (content and length do not matter)
+2. Prefix is padded to the next 64-byte block
+3. Collision block(s) are then computed depending on the prefix and 
+appended. 
+  - Both sides are very random
+  - Differences are predetermined by the attack.
+4. Afterwards, the hash value is the same despite the file differences.
+5. Finally, any arbitrary identical suffix can be added
+
+![It will look something like this](https://github.com/Stuycs-K/final-project-3-zhengg-zengj/blob/main/IMAGES/identical.png)
+
+
 
 
 ### Chosen-prefix Collision Attack
+Unique to Merkle–Damgård hash functions. Take two different files and then 
+append two calculated values resulting in the whole document having the 
+same hash. Here are the basic steps:
+
+1. Take two arbitrary prefixes and pad the shorter one so that it is as 
+long as the other.
+2. Pad both to the next block of memory minus 12 bytes
+3. X near-collision blocks will then be computed and appended.
+
+This type of collision is very powerful but generally takes longer than 
+other variations. 
