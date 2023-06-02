@@ -61,3 +61,5 @@
 https://en.wikipedia.org/wiki/MD5#Algorithm (Psuedocode found here)
 https://fthb321.github.io/MD5-Hash/MD5OurVersion2.html (Visualization of padding)
 https://stackoverflow.com/questions/32933254/which-type-of-leftrotation-is-used-by-the-md5-hash-algorithm (leftrotate found here)
+https://github.com/corkami/collisions (explanation of prefix collisions/ borrowed images)
+https://en.wikipedia.org/wiki/Birthday_attack (birthday attack section/ borrowed images)
